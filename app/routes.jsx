@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route, IndexRoute } from 'react-router';
 import { fetchVoteData } from './fetch-data';
+import jumbotron from './components/jumbotron';
 import { App } from './pages';
 
 /*
@@ -31,7 +32,7 @@ export default (store) => {
   };
   return (
     <Route path="/" component={App}>
-      <IndexRoute fetchData={fetchVoteData} />
+      <IndexRoute component={jumbotron} fetchData={fetchVoteData} />
     </Route>
   );
 };

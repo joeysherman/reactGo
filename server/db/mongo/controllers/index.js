@@ -1,9 +1,9 @@
-import topics from './topics';
 import users from './users';
-
-export { topics, users };
+import messages from './message';
+import conversations from './conversation';
 
 export default {
-  topics,
-  users
+  users,
+  messages,
+  conversations,
 };

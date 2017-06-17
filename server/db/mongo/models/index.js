@@ -1,4 +1,5 @@
 export default function loadModels() {
-  require('./topics');
+  require('./message');
+  require('./conversation');
   require('./user');
 }

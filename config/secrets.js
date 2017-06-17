@@ -7,4 +7,9 @@ export const google = {
   clientSecret: process.env.GOOGLE_SECRET || '6cKCWD75gHgzCvM4VQyR5_TU',
   callbackURL: process.env.GOOGLE_CALLBACK || '/auth/google/callback'
 };
+export const github = {
+  clientID: process.env.GITHUB_CLIENTID || '86a2b8cf1b93dc91f2a2',
+  clientSecret: process.env.GITHUB_SECRET || '5dcee05f0fbac2e531637b2b68fec79a73cfa8d3',
+  callbackURL: process.env.GITHUB_CALLBACK || 'http://3b4a7a91.ngrok.io/auth/github/callback'
+};
 
