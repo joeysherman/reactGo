@@ -21,7 +21,7 @@ export default (req, accessToken, refreshToken, profile, done) => {
     });
   } else {
     console.log('[ github.strategy.profile ] - user not logged in..searching for existing user');
-    UserModel.findOrCreate(profile, function (err, user) {
+    UserModel.find(profile.provider + '.' + profile.id, function (err, user) {
       if (err) return done(err);
       done(null, user);
     });

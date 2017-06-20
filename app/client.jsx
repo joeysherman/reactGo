@@ -7,6 +7,7 @@ import createRoutes from './routes';
 import * as types from './types';
 import configureStore from './store/configureStore';
 import fetchDataForRoute from './utils/fetchDataForRoute';
+import MaterializeCSS from 'materialize-css';
 
 // Grab the state from a global injected into
 // server-generated HTML
