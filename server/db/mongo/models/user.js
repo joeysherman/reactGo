@@ -13,7 +13,12 @@ import _ from 'lodash';
  */
 
 const UserSchema = new mongoose.Schema({
-  email: { type: String, unique: true, lowercase: true },
+  email: {
+    type: String,
+    unique: true,
+    lowercase: true,
+    index: true
+  },
   password: String,
   tokens: Array,
   profile: {
@@ -27,8 +32,38 @@ const UserSchema = new mongoose.Schema({
   resetPasswordExpires: Date,
   createdAt: { type: Date, default: Date.now() },
   services: {
-    google: {},
-    github: {},
+    github: {
+        login: { type: String, index: true },
+        id: { type: String },
+        avatar_url: { type: String },
+        gravatar_id: { type: String },
+        url: { type: String },
+        html_url: { type: String },
+        followers_url: { type: String },
+        following_url: { type: String },
+        gists_url: { type: String },
+        starred_url: { type: String },
+        subscriptions_url: { type: String },
+        organizations_url: { type: String },
+        repos_url: { type: String },
+        events_url: { type: String },
+        received_events_url: { type: String },
+        type: { type: String },
+        site_admin: Boolean,
+        name: { type: String },
+        company: { type: String },
+        blog: { type: String },
+        location: { type: String },
+        email: { type: String },
+        hireable: Boolean,
+        bio: { type: String },
+        public_repos: { type: String },
+        public_gists: Number,
+        followers: Number,
+        following: Number,
+        created_at: Date,
+        updated_at: Date,
+    },
   },
 });
 

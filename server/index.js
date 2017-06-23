@@ -37,14 +37,14 @@ if (isDebug) {
 /*
  * Bootstrap application settings
  */
-//initExpress(app);
+// initExpress(app);
 
 /*
  * REMOVE if you do not need any routes
  *
  * Note: Some of these routes have passport and database model dependencies
  */
-//initRoutes(app);
+// initRoutes(app);
 
 /*
  * This is where the magic happens. We take the locals data we have already
