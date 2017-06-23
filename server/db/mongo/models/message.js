@@ -7,9 +7,11 @@ import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
 const MessageSchema = new Schema({
-    conversationId: {
+    repoId: {
       type: Schema.Types.ObjectId,
-      required: true
+      ref: 'Repo',
+      required: true,
+      index: true,
     },
     body: {
       type: String,
@@ -17,6 +19,7 @@ const MessageSchema = new Schema({
     },
     author: {
       type: Schema.Types.ObjectId,
+      required: true,
       ref: 'User'
     }
   },
