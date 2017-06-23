@@ -14,12 +14,12 @@ const app = express();
  * - connect to MongoDB using mongoose
  * - register mongoose Schema
  */
-//connect();
+connect();
 
 /*
  * REMOVE if you do not need passport configuration
  */
-//initPassport();
+// initPassport();
 
 app.set('port', 3000);
 
@@ -37,14 +37,14 @@ if (isDebug) {
 /*
  * Bootstrap application settings
  */
-// initExpress(app);
+ initExpress(app);
 
 /*
  * REMOVE if you do not need any routes
  *
  * Note: Some of these routes have passport and database model dependencies
  */
-// initRoutes(app);
+ initRoutes(app);
 
 /*
  * This is where the magic happens. We take the locals data we have already

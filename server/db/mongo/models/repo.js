@@ -14,9 +14,7 @@ import mongoose from 'mongoose';
  */
 
 const RepoSchema = new mongoose.Schema({
-    github: {
 
-    },
 });
 
 export default mongoose.model('Repo', RepoSchema);
