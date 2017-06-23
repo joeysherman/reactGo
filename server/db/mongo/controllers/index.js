@@ -1,11 +1,11 @@
 import users from './users';
 import messages from './message';
 import conversations from './conversation';
-import repo from './repo';
+import repos from './repo';
 
 export default {
   users,
-  repo,
+  repos,
   messages,
   conversations,
 };

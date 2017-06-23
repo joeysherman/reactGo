@@ -6,6 +6,7 @@ import unsupportedMessage from '../db/unsupportedMessage';
 import { controllers, passport as passportConfig } from '../db';
 
 const usersController = controllers && controllers.users;
+const reposController = controllers && controllers.repos;
 
 export default (app) => {
   if (passportConfig && passportConfig.google) {
@@ -46,6 +47,7 @@ export default (app) => {
   // user routes
   if (usersController) {
     app.post('/sessions', usersController.login);
+    app.get('/savetest', reposController.saveRepos);
     app.post('/users', usersController.signUp);
     app.delete('/sessions', usersController.logout);
   } else {
