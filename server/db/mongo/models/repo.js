@@ -8,13 +8,27 @@
  */
 
 import mongoose from 'mongoose';
-
 /*
  Repo Schema
  */
 
 const RepoSchema = new mongoose.Schema({
-
+  id: { type: Number, index: true },
+  name: { type: String, index: true },
+  full_name: String,
+  owner: {
+    id: Number,
+  },
+  private: Boolean,
+  html_url: String,
+  description: String,
+  fork: Boolean,
+  url: String,
+  created_at: Date,
+  updated_at: Date,
+  pushed_at: Date,
+}, {
+  timestamps: true,
 });
 
 export default mongoose.model('Repo', RepoSchema);

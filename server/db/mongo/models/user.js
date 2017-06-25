@@ -13,61 +13,49 @@ import _ from 'lodash';
  */
 
 const UserSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    unique: true,
-    lowercase: true,
-    index: true
-  },
+  username: String,
+  name: String,
   password: String,
-  tokens: Array,
-  profile: {
-    name: { type: String, default: '' },
-    gender: { type: String, default: '' },
-    location: { type: String, default: '' },
-    website: { type: String, default: '' },
-    picture: { type: String, default: '' }
-  },
   resetPasswordToken: String,
   resetPasswordExpires: Date,
   createdAt: { type: Date, default: Date.now() },
-  services: {
-    github: {
-        login: { type: String, index: true },
-        id: { type: String },
-        avatar_url: { type: String },
-        gravatar_id: { type: String },
-        url: { type: String },
-        html_url: { type: String },
-        followers_url: { type: String },
-        following_url: { type: String },
-        gists_url: { type: String },
-        starred_url: { type: String },
-        subscriptions_url: { type: String },
-        organizations_url: { type: String },
-        repos_url: { type: String },
-        events_url: { type: String },
-        received_events_url: { type: String },
-        type: { type: String },
-        site_admin: Boolean,
-        name: { type: String },
-        company: { type: String },
-        blog: { type: String },
-        location: { type: String },
-        email: { type: String },
-        hireable: Boolean,
-        bio: { type: String },
-        public_repos: { type: String },
-        public_gists: Number,
-        followers: Number,
-        following: Number,
-        created_at: Date,
-        updated_at: Date,
-    },
+  // Services
+  github: {
+      accessToken: String,
+      login: { type: String, index: true },
+      id: { type: String },
+      avatar_url: { type: String },
+      gravatar_id: { type: String },
+      url: { type: String },
+      html_url: { type: String },
+      followers_url: { type: String },
+      following_url: { type: String },
+      gists_url: { type: String },
+      starred_url: { type: String },
+      subscriptions_url: { type: String },
+      organizations_url: { type: String },
+      repos_url: { type: String },
+      events_url: { type: String },
+      received_events_url: { type: String },
+      type: { type: String },
+      site_admin: Boolean,
+      name: { type: String },
+      company: { type: String },
+      blog: { type: String },
+      location: { type: String },
+      email: { type: String },
+      hireable: Boolean,
+      bio: { type: String },
+      public_repos: { type: String },
+      public_gists: Number,
+      followers: Number,
+      following: Number,
+      created_at: Date,
+      updated_at: Date,
   },
 });
 
-function encryptPassword(next) {
+ function encryptPassword(next) {
   const user = this;
   if (!user.isModified('password')) return next();
   return bcrypt.genSalt(5, (saltErr, salt) => {
@@ -95,50 +83,38 @@ UserSchema.methods.comparePassword = function (candidatePassword, cb) {
     });
 };
 
-UserSchema.methods.isConfigured = function(type) {
-  // check if current document has the provider configured or not
-  return this.services[type].isConfigured;
+UserSchema.methods.checkAccessToken = function(token, cb) {
+  if (this.github.accessToken === token) {
+    return cb(null);
+  }
+
 };
-
-UserSchema.methods.addProvider = function(profile, cb) {
-  // add provider to existing User
-
-  var userData = {
-    state: 'enabled',
-
-    isVerified: true,
-
-    services: this.services || {}
-  };
-
-  _.extend(userData.services[profile.provider], {
-    isConfigured: true,
-
-    profileId: profile.id,
-
-    username: profile.displayName,
-    avatar: profile.avatar || null,
-
-    accessToken: profile.accessToken,
-    refreshToken: profile.refreshToken
-  });
-
-  this.set(userData);
-
-  this.save(function(err, user) {
-    if (err) {
-      console.log('[user.addProvider] - Error saving existing user.', err);
-      console.log('------------------------------------------------------------');
-      return cb({ message: 'Sorry, there was an error processing your account, please try again.' });
-    }
-    console.log('[user.addProvider] - Saved existing user.');
-    console.log('------------------------------------------------------------');
-    return cb(null, user);
-  });
-};
-
 /**
  * Statics
  */
+
+UserSchema.statics.findExistingUser = function (profile, cb) {
+  const queryById = this.findOne()
+    .where('github.id', profile.id);
+
+  // check if user exists from profile.id
+  queryById.exec(function (err, user) {
+    if (err) {
+      console.log('[user.findOrCreate] - Error finding existing user via profile id.', err);
+      console.log('------------------------------------------------------------');
+      return cb({ message: 'Sorry, there was an error processing your information, please try again.' });
+    }
+    if (user) {
+      console.log('[user.findOrCreate] - Found existing user via [' + profile.provider + '] profile id...');
+      console.log('------------------------------------------------------------');
+      return cb(null, user);
+    }
+    // no existing user registered with this profile.id
+    // no existing user, create new one
+      console.log('[user.findOrCreate] - No existing user found...');
+      console.log('------------------------------------------------------------');
+      return cb({ newUser: true });
+    });
+  };
 
 export default mongoose.model('User', UserSchema);

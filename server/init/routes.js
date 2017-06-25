@@ -47,7 +47,6 @@ export default (app) => {
   // user routes
   if (usersController) {
     app.post('/sessions', usersController.login);
-    app.get('/savetest', reposController.saveRepos);
     app.post('/users', usersController.signUp);
     app.delete('/sessions', usersController.logout);
   } else {

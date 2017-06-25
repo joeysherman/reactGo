@@ -19,7 +19,7 @@ connect();
 /*
  * REMOVE if you do not need passport configuration
  */
-// initPassport();
+initPassport();
 
 app.set('port', 3000);
 

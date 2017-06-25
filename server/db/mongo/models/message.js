@@ -11,7 +11,6 @@ const MessageSchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: 'Repo',
       required: true,
-      index: true,
     },
     body: {
       type: String,
