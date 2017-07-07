@@ -38,7 +38,6 @@ if (isDebug) {
  * Bootstrap application settings
  */
  initExpress(app);
-
 /*
  * REMOVE if you do not need any routes
  *

@@ -13,7 +13,7 @@ import mongoose from 'mongoose';
  */
 
 const RepoSchema = new mongoose.Schema({
-  id: { type: Number, index: true },
+  github_id: { type: Number, index: true },
   name: { type: String, index: true },
   full_name: String,
   owner: {
@@ -30,6 +30,17 @@ const RepoSchema = new mongoose.Schema({
 }, {
   timestamps: true,
 });
+
+RepoSchema.statics.exists = function (github_id) {
+  this.find().where('github_id', github_id).exec((error, response) => {
+    console.log('Exists [where query] - ' + error + response);
+    if (error) {
+      return false;
+    }
+    return true;
+  });
+};
+
 
 export default mongoose.model('Repo', RepoSchema);
 
