@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, IndexRoute } from 'react-router';
 import { fetchVoteData } from './fetch-data';
-import HomePage from './pages/HomePage';
+import Dashboard from './pages/Dashboard';
 import { App } from './pages';
 
 /*
@@ -32,7 +32,7 @@ export default (store) => {
   };
   return (
     <Route path="/" component={App}>
-      <IndexRoute component={HomePage} fetchData={fetchVoteData} />
+      <IndexRoute component={Dashboard} fetchData={fetchVoteData} />
     </Route>
   );
 };

@@ -7,7 +7,10 @@ import React from 'react';
 
 const Dashboard = ({ header, body, footer }) => {
   return (
-    <div>Hello</div>
+    <div>
+      <h1>Hello</h1>
+      <a href="/auth/github">Login</a>
+    </div>
   );
 }
 

@@ -12,15 +12,17 @@ import Repo from './repo';
 
 /*
  User Schema
+ - Does user exist?
+ - Create new user
  */
 
 const UserSchema = new mongoose.Schema({
-  username: String,
   name: String,
   password: String,
+  picture: String,
   resetPasswordToken: String,
   resetPasswordExpires: Date,
-  createdAt: { type: Date, default: Date.now() },
+  createdAt: { type: Date, default: Date.now },
   repos: [{
     id: {
       type: mongoose.Schema.Types.ObjectId,
@@ -85,7 +87,7 @@ const UserSchema = new mongoose.Schema({
 /**
  * Password hash middleware.
  */
-// UserSchema.pre('save', fetchUserRepos);
+UserSchema.pre('save', fetchUserRepos);
 
 /*
  Defining our own custom document instance method
@@ -106,11 +108,6 @@ UserSchema.methods.reposAreAttached = function (repoArray) {
     }
   }
 };
-
-UserSchema.methods.handleRepos = function(reposArray) {
-  reposArray.forEach
-};
-
 // Axios Schema: [ 'status', 'statusText', 'headers', 'config', 'request', 'data' ]
 
 function fetchUserRepos(cb) {
@@ -118,16 +115,60 @@ function fetchUserRepos(cb) {
   const url = 'https://api.github.com/users/' + this.username + '/repos';
   axios.get(url)
     .then((response) => {
-      if (response.data && Array.isArray(response.data)) {
-        repos = response.data;
-        this.saveRepos(repos);
-      }
+        console.log(JSON.stringify(response.data));
+        cb();
     })
     .catch((error) => {
       console.log(error);
       cb();
     });
 }
+
+UserSchema.statics.findOrCreate = function(profile, cb) {
+    var queryById = this.findOne()
+        .where('github.id', profile.id);
+
+    // check if user exists from profile.id
+    queryById.exec(function (err, user) {
+        if (err) {
+            console.log('[user.findOrCreate] - Error finding existing user via profile id.', err);
+            console.log('------------------------------------------------------------');
+            return cb({ message: 'Sorry, there was an error processing your information, please try again.' });
+        }
+        if (user) {
+            console.log('[user.findOrCreate] - Found existing user via [' + profile.provider + '] profile id...');
+            console.log('------------------------------------------------------------');
+            return cb(null, user);
+        }
+            // no existing user, create new one
+            console.log('[user.findOrCreate] - Creating new user...');
+            console.log('------------------------------------------------------------');
+            var userData = {
+                name: profile.username,
+                picture: profile.photos[0].value || null,
+                password: Math.random().toString(36).slice(-8),
+            };
+
+            userData.github = {
+                profileId: profile.id,
+                username: profile.displayName,
+                accessToken: profile.accessToken,
+            };
+
+            var newUser = new User.model(userData);
+
+            newUser.save(function (err) {
+                if (err) {
+                    console.log('[user.findOrCreate] - Error saving new user.', err);
+                    console.log('------------------------------------------------------------');
+                    return cb({ message: 'Sorry, there was an error processing your account, please try again.' });
+                }
+                console.log('[user.findOrCreate] - Saved new user.');
+                console.log('------------------------------------------------------------');
+                return cb(null, newUser);
+            });
+        });
+    };
 
 UserSchema.methods.checkAccessToken = function(token, cb) {
   if (this.github.accessToken === token) {
@@ -138,30 +179,6 @@ UserSchema.methods.checkAccessToken = function(token, cb) {
 /**
  * Statics
  */
-
-UserSchema.statics.findExistingUser = function (profile, cb) {
-  const queryById = this.findOne()
-    .where('github.id', profile.id);
-
-  // check if user exists from profile.id
-  queryById.exec(function (err, user) {
-    if (err) {
-      console.log('[user.findOrCreate] - Error finding existing user via profile id.', err);
-      console.log('------------------------------------------------------------');
-      return cb({ message: 'Sorry, there was an error processing your information, please try again.' });
-    }
-    if (user) {
-      console.log('[user.findOrCreate] - Found existing user via [' + profile.provider + '] profile id...');
-      console.log('------------------------------------------------------------');
-      return cb(null, user);
-    }
-    // no existing user registered with this profile.id
-    // no existing user, create new one
-      console.log('[user.findOrCreate] - No existing user found...');
-      console.log('------------------------------------------------------------');
-      return cb({ newUser: true });
-    });
-  };
 
 export default mongoose.model('User', UserSchema);
 

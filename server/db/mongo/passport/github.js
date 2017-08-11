@@ -6,20 +6,24 @@ import User from '../models/user';
 
 /* eslint-disable no-param-reassign */
 export default (req, accessToken, refreshToken, profile, done) => {
-  User.findExistingUser(profile, function(err, user) {
-    if (user) {
-      return done(null, user);
-    }
-    if (err && err.newUser) {
-      const data = JSON.parse(profile._raw);
-      data.accesstoken = accessToken;
-      const newUser = new User({
-          name: data.name,
-          username: data.login,
-          github: data,
+    console.log(JSON.stringify(profile));
+    console.log('accesstoken: ' + accessToken);
+    console.log('rft ' + refreshToken);
+    if (req.user) {
+        console.log('Existing user!');
+        console.log('req.user ' + JSON.stringify(req.user));
+        if (req.user.name == profile.username) {
+            console.log('Already logged in...welcome back ' + req.user.name );
+            return done(null, req.user);
+        } else {
+            req.logOut();
+            console.log('already logged in but new user!');
+            return done(true);
+        }
+    } else {
+        User.findOrCreate(profile, function(err, user) {
+           return done(err, user);
         });
-      newUser.save(done);
     }
-  });
 };
 /* eslint-enable no-param-reassign */
