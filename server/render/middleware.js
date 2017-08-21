@@ -53,6 +53,10 @@ export default function render(req, res) {
       // This method waits for all render component
       // promises to resolve before returning to browser
       store.dispatch({ type: types.CREATE_REQUEST });
+      if (req.user) {
+        console.log(req.user);
+        store.dispatch({ type: types.LOGIN_SUCCESS_USER, payload: req.user });
+      }
       fetchDataForRoute(props)
         .then((data) => {
           store.dispatch({ type: types.REQUEST_SUCCESS, data });

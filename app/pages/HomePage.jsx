@@ -3,6 +3,7 @@
  */
 
 import React from 'react';
+import { connect } from 'react-redux';
 
 const HomePage = props => (
   <div className="container">
@@ -10,12 +11,12 @@ const HomePage = props => (
       <div className="card-panel grey lighten-5 z-depth-1">
         <div className="row valign-wrapper">
           <div className="col s2">
-            <img src={props.picture} alt="" className="circle responsive-img"></img>
+            <img src={props.profile.picture} alt="" className="circle responsive-img" />
           </div>
           <div className="col s10">
-              <span className="black-text">
-                {props.name}
-              </span>
+            <span className="black-text">
+              {props.profile.name}
+            </span>
           </div>
         </div>
       </div>
@@ -23,4 +24,10 @@ const HomePage = props => (
   </div>
 );
 
-export default HomePage;
+function mapStateToProps(state) {
+  return {
+    profile: state.user.profile,
+  };
+}
+
+export default connect(mapStateToProps)(HomePage);

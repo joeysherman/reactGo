@@ -3,20 +3,27 @@
  */
 
 import React from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-const Navbar = () => (
+const Navbar = ({ isLoggedIn }) => (
   <nav>
     <div className="nav-wrapper">
       <a href="#" className="brand-logo">GitChat</a>
       <ul id="nav-mobile" className="right hide-on-med-and-down">
         <li><a href="sass.html">Home</a></li>
         <li><a href="badges.html">About</a></li>
-        <li><a href="collapsible.html">Log in</a></li>
+        { isLoggedIn ? <li><a href="/auth/github">Log out</a></li> : <li><a href="/auth/github">Log in</a></li> }
       </ul>
     </div>
   </nav>
 );
 
-module.exports = Navbar;
+function mapStateToProps(state) {
+  return {
+    isLoggedIn: state.user.authenticated
+  };
+}
+
+module.exports = connect(mapStateToProps)(Navbar);
 

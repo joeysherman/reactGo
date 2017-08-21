@@ -75,19 +75,17 @@ const authenticated = (
   }
 };
 
-const user = (
-  state = false,
+const profile = (
+  state = {},
   action
 ) => {
   switch (action.type) {
     case types.LOGIN_SUCCESS_USER:
-    case types.SIGNUP_SUCCESS_USER:
-    case types.LOGOUT_ERROR_USER:
-      return true;
+      return action.payload;
     case types.LOGIN_ERROR_USER:
     case types.SIGNUP_ERROR_USER:
     case types.LOGOUT_SUCCESS_USER:
-      return false;
+      return {};
     default:
       return state;
   }
@@ -95,7 +93,7 @@ const user = (
 
 const userReducer = combineReducers({
   isLogin,
-  user,
+  profile,
   isWaiting,
   authenticated,
   message

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Route, IndexRoute } from 'react-router';
 import { fetchVoteData } from './fetch-data';
-import Dashboard from './pages/Dashboard';
 import { App } from './pages';
 import HomePage from './pages/HomePage';
 
