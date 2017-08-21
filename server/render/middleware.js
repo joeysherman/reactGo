@@ -54,7 +54,7 @@ export default function render(req, res) {
       // promises to resolve before returning to browser
       store.dispatch({ type: types.CREATE_REQUEST });
       if (req.user) {
-        console.log(req.user);
+        console.log('Returning user...' + req.user.id);
         store.dispatch({ type: types.LOGIN_SUCCESS_USER, payload: req.user });
       }
       fetchDataForRoute(props)

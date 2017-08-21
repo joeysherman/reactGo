@@ -5,9 +5,12 @@ import { connect } from './db';
 import initPassport from './init/passport';
 import initExpress from './init/express';
 import initRoutes from './init/routes';
+import initSocketIO from './socket.io/index';
 import renderMiddleware from './render/middleware';
 
-const app = express();
+var app = require('express')();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
 /*
  * Database-specific setup
@@ -51,6 +54,9 @@ if (isDebug) {
  * renderMiddleware matches the URL with react-router and renders the app into
  * HTML
  */
+
+initSocketIO(io);
+
 app.get('*', renderMiddleware);
 
-app.listen(app.get('port'));
+http.listen(app.get('port'));

@@ -3,6 +3,7 @@ import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router, browserHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
+import io from 'socket.io-client';
 import createRoutes from './routes';
 import * as types from './types';
 import configureStore from './store/configureStore';
@@ -15,6 +16,7 @@ const initialState = window.__INITIAL_STATE__;
 const store = configureStore(initialState, browserHistory);
 const history = syncHistoryWithStore(browserHistory, store);
 const routes = createRoutes(store);
+var   socket;
 
 /**
  * Callback function handling frontend route changes.
@@ -27,6 +29,7 @@ function onUpdate() {
   // still trigger a fetch data.
   // Read more: https://github.com/choonkending/react-webpack-node/pull/203#discussion_r60839356
   if (window.__INITIAL_STATE__ !== null) {
+    socket = io();
     window.__INITIAL_STATE__ = null;
     return;
   }
