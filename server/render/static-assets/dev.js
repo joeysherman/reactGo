@@ -12,7 +12,7 @@ ga('send', 'pageview');
 </script>
 <script async src='https://www.google-analytics.com/analytics.js'></script>`;
 
-const createStylesheets = () => '<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Condensed" />';
+const createStylesheets = () => '  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/css/materialize.min.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Condensed" />';
 
 export { createAppScript, createTrackingScript, createStylesheets };
 

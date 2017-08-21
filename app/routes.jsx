@@ -3,6 +3,7 @@ import { Route, IndexRoute } from 'react-router';
 import { fetchVoteData } from './fetch-data';
 import Dashboard from './pages/Dashboard';
 import { App } from './pages';
+import HomePage from './pages/HomePage';
 
 /*
  * @param {Redux Store}
@@ -32,7 +33,7 @@ export default (store) => {
   };
   return (
     <Route path="/" component={App}>
-      <IndexRoute component={Dashboard} fetchData={fetchVoteData} />
+      <IndexRoute component={HomePage} fetchData={fetchVoteData} />
     </Route>
   );
 };
