@@ -99,7 +99,7 @@ function testAsync(n) {
 UserSchema.pre('save', true, function(next, done) {
   const promises = [];
   const reposURL = 'https://api.github.com/users/' + this.name + '/repos?type=all';
-  let repoURL = 'https://api.github.com/repos/' + this.name;
+  let repoURL = 'https://api.github.com/repos/' + this.name + '/';
   next();
   axios.get(reposURL)
     .then((repos) => {
@@ -107,23 +107,34 @@ UserSchema.pre('save', true, function(next, done) {
         return !repo.private && repo.fork;
       });
       console.log('Forks found: ' + forks.length)
-      let forkSources = []
+      let forkSources = [];
       let fetched = [];
       forks.forEach((fork) => {
+        fetched.push(axios.get(repoURL + fork.name).then((resp) => {
+          console.log('Inside fetched loop - ' + resp.data.source.name + ' : ' + resp.data.source.id);
+          forkSources.push(resp.data.source);
+        }));
+      });
+      Promise.all(fetched)
+        .then((fetchedAll) => {
+            console.log('fetched all source repos');
+          })
+        .catch((error) => {
+          console.log('Error fetching source repos');
 
-      })
+        })
+        .finally(() => {
+          done();
+        })
     })
     .catch((error) => {
-
+      console.error('Error in first axios get - ' + error);
     });
   // fetch all repos
   // decide which are forks and !private
   // decide if repo exists
   // if NO -> create repo
   // if YES -> $addToSet to users with user ID (this.id)
-  Promise.all(promises).then((result) => {
-     console.log('Done ' + result);
-    });
 });
 
 /*
