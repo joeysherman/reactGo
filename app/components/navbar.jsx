@@ -13,7 +13,7 @@ const Navbar = ({ isLoggedIn }) => (
       <ul id="nav-mobile" className="right hide-on-med-and-down">
         <li><a href="sass.html">Home</a></li>
         <li><a href="badges.html">About</a></li>
-        { isLoggedIn ? <li><a href="/auth/github">Log out</a></li> : <li><a href="/auth/github">Log in</a></li> }
+        { isLoggedIn ? <li><a href="/logout">Log out</a></li> : <li><a href="/auth/github">Log in</a></li> }
       </ul>
     </div>
   </nav>

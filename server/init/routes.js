@@ -32,6 +32,11 @@ export default (app) => {
       );
     }
   }
+
+  app.get('/logout', (req, res) => {
+    req.logout();
+    res.redirect('/');
+  });
   // topic routes
 
   // Google will redirect the user to this URL after authentication. Finish the

@@ -13,12 +13,18 @@ import mongoose from 'mongoose';
  */
 
 const RepoSchema = new mongoose.Schema({
-  github_id: { type: Number, index: true },
+  id: { type: Number, index: true },
   name: { type: String, index: true },
   full_name: String,
   owner: {
     id: Number,
   },
+  users: [{
+    _id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    }
+  }],
   private: Boolean,
   html_url: String,
   description: String,
@@ -31,13 +37,10 @@ const RepoSchema = new mongoose.Schema({
   timestamps: true,
 });
 
-RepoSchema.statics.exists = function (github_id) {
-  this.find().where('github_id', github_id).exec((error, response) => {
-    console.log('Exists [where query] - ' + error + response);
-    if (error) {
-      return false;
-    }
-    return true;
+RepoSchema.statics.exists = function (githubId, next) {
+  this.find().where('id', githubId).exec((error, response) => {
+    console.log('Exists [where query] - ID ' + githubId + ' is ' + error ? 'NEW' : 'PRESENT');
+    next(error, response);
   });
 };
 

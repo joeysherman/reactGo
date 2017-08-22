@@ -4,6 +4,7 @@
  */
 
 import bcrypt from 'bcrypt-nodejs';
+import async from 'async';
 import mongoose from 'mongoose';
 import axios from 'axios';
 import _ from 'lodash';
@@ -24,14 +25,7 @@ const UserSchema = new mongoose.Schema({
   resetPasswordExpires: Date,
   createdAt: { type: Date, default: Date.now },
   repos: [{
-    id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Repo',
-    },
-    github_id: {
-      type: mongoose.Schema.Types.Number,
-      index: true,
-    }
+    id: Number,
   }],
   // Services
   github: {
@@ -87,7 +81,50 @@ const UserSchema = new mongoose.Schema({
 /**
  * Password hash middleware.
  */
-UserSchema.pre('save', fetchUserRepos);
+
+UserSchema.pre('init', (next, data) => {
+  console.log('Pre hook data' + JSON.stringify(data));
+  next();
+});
+
+function testAsync(n) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      this.repos.push({ id: n });
+      resolve();
+    }, 250 * n);
+  });
+}
+
+UserSchema.pre('save', true, function(next, done) {
+  const promises = [];
+  const reposURL = 'https://api.github.com/users/' + this.name + '/repos?type=all';
+  let repoURL = 'https://api.github.com/repos/' + this.name;
+  next();
+  axios.get(reposURL)
+    .then((repos) => {
+      let forks = repos.data.filter(function(repo) {
+        return !repo.private && repo.fork;
+      });
+      console.log('Forks found: ' + forks.length)
+      let forkSources = []
+      let fetched = [];
+      forks.forEach((fork) => {
+
+      })
+    })
+    .catch((error) => {
+
+    });
+  // fetch all repos
+  // decide which are forks and !private
+  // decide if repo exists
+  // if NO -> create repo
+  // if YES -> $addToSet to users with user ID (this.id)
+  Promise.all(promises).then((result) => {
+     console.log('Done ' + result);
+    });
+});
 
 /*
  Defining our own custom document instance method
@@ -110,26 +147,13 @@ UserSchema.methods.reposAreAttached = function (repoArray) {
 };
 // Axios Schema: [ 'status', 'statusText', 'headers', 'config', 'request', 'data' ]
 
-function fetchUserRepos(cb) {
-  let repos = [];
-  const url = 'https://api.github.com/users/' + this.username + '/repos';
-  axios.get(url)
-    .then((response) => {
-        console.log(JSON.stringify(response.data));
-        cb();
-    })
-    .catch((error) => {
-      console.log(error);
-      cb();
-    });
-}
-
-UserSchema.statics.findOrCreate = function(profile, cb) {
-    var queryById = this.findOne()
+UserSchema.statics.findOrCreate = function (profile, cb) {
+    const queryById = this.findOne()
         .where('github.id', profile.id);
+    const self = this;
 
     // check if user exists from profile.id
-    queryById.exec(function (err, user) {
+    queryById.exec((err, user) => {
         if (err) {
             console.log('[user.findOrCreate] - Error finding existing user via profile id.', err);
             console.log('------------------------------------------------------------');
@@ -143,7 +167,7 @@ UserSchema.statics.findOrCreate = function(profile, cb) {
             // no existing user, create new one
             console.log('[user.findOrCreate] - Creating new user...');
             console.log('------------------------------------------------------------');
-            var userData = {
+            const userData = {
                 name: profile.username,
                 picture: profile.photos[0].value || null,
                 password: Math.random().toString(36).slice(-8),
@@ -155,22 +179,20 @@ UserSchema.statics.findOrCreate = function(profile, cb) {
                 accessToken: profile.accessToken,
             };
 
-            var newUser = new User.model(userData);
-
-            newUser.save(function (err) {
-                if (err) {
-                    console.log('[user.findOrCreate] - Error saving new user.', err);
-                    console.log('------------------------------------------------------------');
-                    return cb({ message: 'Sorry, there was an error processing your account, please try again.' });
-                }
+            self.create(userData, (error, doc) => {
+              if (error) {
+                console.log('[user.findOrCreate] - Error saving new user.', error);
+                console.log('------------------------------------------------------------');
+              } else {
                 console.log('[user.findOrCreate] - Saved new user.');
                 console.log('------------------------------------------------------------');
-                return cb(null, newUser);
+              }
+              return cb(error, doc);
             });
         });
     };
 
-UserSchema.methods.checkAccessToken = function(token, cb) {
+UserSchema.methods.checkAccessToken = function (token, cb) {
   if (this.github.accessToken === token) {
     return cb(null);
   }
